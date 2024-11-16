@@ -54,6 +54,47 @@ class Students(db.Model):
             }
         ), 200
     
+    @app.route("/students", methods=['POST'])
+    def add_student():
+        if not request.is_json:
+            return jsonify(
+                {
+                    "success":False,  "error": "Content-type must be application/json"
+                }
+            ),404
+        data = request.get_json()
+        required_fields = ["student_number","first_name", "middle_name", "last_name", "gender", "birthday"]
+
+        for field in required_fields:
+            if field not in data:
+                return jsonify(
+                    {
+                        "success": False, "error": f"Missing field: {field}."
+                    }
+                ),404
+
+        try:
+            new_student = Students(
+                student_number = data["student_number"],
+                first_name = data["first_name"],
+                middle_name = data["middle_name"],
+                last_name = data["last_name"],
+                gender = data["gender"],
+                birthday = datetime.strptime(data["birthday"], "%Y-%m-%d")
+            )
+            db.session.add(new_student)
+            db.session.commit()
+        except Exception as e:
+            return jsonify(
+                {
+                    "success": False, "error": str(e)
+                }
+            ), 500
+        return jsonify(
+            {
+                "success": True, "data": new_student.to_dict()
+            }
+        ), 201
             
     
 if __name__=='__main__':
