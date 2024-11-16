@@ -39,6 +39,20 @@ class Students(db.Model):
                 "success": True, "data":[student.to_dict() for student in students]
             }
         ), 200
+    @app.route("/students/<int:id>", methods=['GET'])
+    def get_student(id):
+        student = Students.query.get(id)
+        if not student:
+            return jsonify(
+                {
+                    "success":False, "error": "Student not found"
+                }
+            ), 404
+        return jsonify(
+            {
+                "success": True, "data": student.to_dict()
+            }
+        ), 200
     
             
     
