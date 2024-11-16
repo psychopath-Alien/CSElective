@@ -4,7 +4,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Corrected the configuration key for the database URI
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@127.0.0.1/student'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -28,7 +27,7 @@ class Students(db.Model):
             "middle_name": self.middle_name,
             "last_name": self.last_name,
             "gender": self.gender,
-            "birthday": self.birthday.strftime("%Y-%m-%d")  # Fixed typo here
+            "birthday": self.birthday.strftime("%Y-%m-%d")
         }
     
 @app.route("/students", methods=["GET"])
@@ -158,7 +157,7 @@ def delete_student(id):
     return jsonify(
         {
             "success": True,
-            "message": "Student successfully deleted"  # Corrected success message
+            "message": "Student successfully deleted" 
         }
     ), 204
 
