@@ -95,7 +95,38 @@ class Students(db.Model):
                 "success": True, "data": new_student.to_dict()
             }
         ), 201
-            
+    
+    @app.route("/students/<int:id>", methods=["PUT"])
+    def update_student(id):
+        student = Students.query.get(id)
+        if not student:
+            return jsonify(
+                {
+                    "success": False, "error": "Student not found"
+                }
+            ), 404
+        data = request.get_json()
+        updatable_fields = ["student_number", "first_name", "middle_name", "last_name", "gender", "birthday"]
+
+        for field in updatable_fields:
+            if field in data:
+                if field == "birthday":
+                    try:
+                        setattr(student, field, datetime.strptime(data[field], "%Y-%m-%d"))
+                    except ValueError:
+                        return jsonify(
+                            {
+                                "success": False, "error": "Invalid format, use YYYY-MM-DD"
+                            }
+                        ), 400
+                else:
+                    setattr(student, field, data[field])
+        db.session.commit()
+        return jsonify(
+            {
+                "success":True, "data": student.to_dict()
+            }
+        ), 200
     
 if __name__=='__main__':
     
