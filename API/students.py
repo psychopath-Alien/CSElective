@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -30,5 +31,17 @@ class Students(db.Model):
             "birthday": self.bithday.strftime("%Y-%m-%d")
         }
     
+    @app.route("/students" , methods="GET")
+    def get_students():
+        students = Students.query.limit(100)
+        return jsonify(
+            {
+                "success": True, "data":[student.to_dict() for student in students]
+            }
+        ), 200
+    
+            
+    
 if __name__=='__main__':
+    
     app.run(debug=True) 
