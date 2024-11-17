@@ -4,7 +4,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@127.0.0.1/student'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@127.0.0.1/school'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -29,7 +29,7 @@ class Students(db.Model):
             "gender": self.gender,
             "birthday": self.birthday.strftime("%Y-%m-%d")
         }
-    
+
 @app.route("/students", methods=["GET"])
 def get_students():
     students = Students.query.limit(100)
@@ -42,7 +42,7 @@ def get_students():
 
 @app.route("/students/<int:id>", methods=['GET'])
 def get_student(id):
-    student = Students.query.get(id)
+    student = db.session.get(Students, id)
     if not student:
         return jsonify(
             {
@@ -106,7 +106,7 @@ def add_student():
 
 @app.route("/students/<int:id>", methods=["PUT"])
 def update_student(id):
-    student = Students.query.get(id)
+    student = db.session.get(Students, id)
     if not student:
         return jsonify(
             {
@@ -143,7 +143,7 @@ def update_student(id):
 
 @app.route("/students/<int:id>", methods=["DELETE"])
 def delete_student(id):
-    student = Students.query.get(id)
+    student = db.session.get(Students, id)
     if not student:
         return jsonify(
             {
